@@ -1,41 +1,61 @@
-# 📉 Task 2: Unemployment Analysis - OIBSIP Data Science Internship
+# Unemployment Analysis in India - OIBSIP Data Science Task
 
-# This task analyzes unemployment data in India and visualizes trends
-# using line plots by region over time.
-
-# ✅ Libraries
+# Import libraries
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ✅ Step 1: Load the dataset
-# Make sure the dataset 'Unemployment in India.csv' is available locally.
-# It should contain columns like: Date, Region, Estimated Unemployment Rate (%)
+# Load the dataset
+data = pd.read_csv("Unemployment_Rate_upto_11_2020.csv")
 
-df = pd.read_csv("Unemployment in India.csv")
+# Display the first 5 rows
+print("Dataset Preview:\n", data.head())
 
-# ✅ Step 2: Display basic info and check data types
-print("Dataset Info:")
-print(df.info())
+# Check for missing values
+print("\nMissing Values:\n", data.isnull().sum())
 
-# ✅ Step 3: Convert 'Date' column to datetime format
-# This helps in proper plotting on a timeline
-df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
+# Data Preprocessing
+# Convert the 'Date' column to datetime format
+data['Date'] = pd.to_datetime(data['Date'], format='%Y-%m')
 
-# ✅ Step 4: Preview the cleaned data
-print("\nCleaned Data Preview:")
-print(df.head())
+# Check the unique regions
+print("\nRegions:\n", data['Region'].unique())
 
-# ✅ Step 5: Create a line plot for Unemployment Rate over time for each Region
+# Descriptive statistics
+print("\nStatistical Summary:\n", data.describe())
+
+# Plot Unemployment Rate over Time for India
 plt.figure(figsize=(12, 6))
-sns.lineplot(data=df, x="Date", y="Estimated Unemployment Rate (%)", hue="Region", marker='o')
-
-# ✅ Step 6: Add labels and title
-plt.title("📈 Unemployment Rate Over Time by Region")
-plt.xlabel("Date")
-plt.ylabel("Estimated Unemployment Rate (%)")
+sns.lineplot(x='Date', y='Unemployment Rate', data=data, label='India')
+plt.title('Unemployment Rate in India Over Time')
+plt.xlabel('Date')
+plt.ylabel('Unemployment Rate (%)')
 plt.xticks(rotation=45)
+plt.grid(alpha=0.3)
+plt.legend()
 plt.tight_layout()
+plt.show()
 
-# ✅ Step 7: Show the plot
+# Plot Unemployment Rate by Region
+plt.figure(figsize=(14, 8))
+sns.lineplot(x='Date', y='Unemployment Rate', hue='Region', data=data)
+plt.title('Unemployment Rate by Region')
+plt.xlabel('Date')
+plt.ylabel('Unemployment Rate (%)')
+plt.xticks(rotation=45)
+plt.grid(alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Top 5 Regions with Highest Unemployment Rate in November 2020
+nov_2020 = data[data['Date'] == '2020-11-01']
+top_regions = nov_2020.sort_values(by='Unemployment Rate', ascending=False).head(5)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Unemployment Rate', y='Region', data=top_regions, palette='coolwarm')
+plt.title('Top 5 Regions with Highest Unemployment Rate (Nov 2020)')
+plt.xlabel('Unemployment Rate (%)')
+plt.ylabel('Region')
+plt.grid(alpha=0.3)
+plt.tight_layout()
 plt.show()
